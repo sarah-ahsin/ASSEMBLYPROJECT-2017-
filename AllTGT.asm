@@ -3,14 +3,14 @@ title "Myanmar Flag"
 ORG 100H
 
 
+;   MYANMAR FLAG IS DRAWN HERE IN THE (320 X 200) PIXELS SCREEN.
+;   IT IS DIVIDED INTO 4 PARTS - THE BACKGROUND AND 3 PARTS OF THE STAR.
 ;
+;   THE STAR IS DIVIDED INTO A TRIANGLE, A TRAPEZIUM AND THEN TWO REFLECTING TRIANGLES.
 ;
+;    FOLLOWING DATA FOR EACH PART HAS BEEN EXPLAINED IN DATA SEGMENT.
 ;
-;
-;
-;
-;
-;
+;    PROCEDURE IDEA HAS BEEN EXPLAINED BEFORE DECLARING THE VARIABALES IN DATA SEGMENT
 ;
 ;
 ;
@@ -22,6 +22,12 @@ ORG 100H
 
 .STACK 100H
 
+    ;    
+    ;
+    ;     BACKGROUND DONE HERE.
+    ;
+    ;     THREE RECTANGLES:- YELLOW, GREEN AND RED;
+    ;
     ;
     ;     MACRO REC_FILL TAKES THE INITIAL AND FINAL Y CO-ORDINATES AND THE COLOR YOU WANT TO FILL A RECTANGLE WITH AS PARAMETERS.
     ;     THE SIZE OF THE RECTANGLE IS FIXED FOR NOW. IT IS 1/3RD OF THE SIZE OF THE (320 X 200) SCREEN.
@@ -38,10 +44,10 @@ ORG 100H
     
     REC_FILL  MACRO REC_Y1, REC_Y2, REC_COLOR 
            LOCAL VERTICALBOUND, HORIZONTALBOUND, LINECOLORED, DONEFILL
-            MOV DX,REC_Y1
             
+            MOV DX,REC_Y1
         
-            VERTICALBOUND:
+            VERTICALBOUND:             ;CHECKING IF LAST LINE OF THE RECTANGLE GIVEN IS COLORED
         
         CMP DX,REC_Y2
         JG DONEFILL
@@ -70,12 +76,7 @@ ORG 100H
         JMP VERTICALBOUND
         
         
-            DONEFILL:
-            
-           
-            
-          
-        
+            DONEFILL:      
         
         
         ENDM 
@@ -95,11 +96,11 @@ REC_COLORP DB 14D        ;YELLOW
  
  
 
-;  (X1,Y1) IS THE PEAK OF THE TRIANGLE, (X2, Y2) AND (X3,Y3) ARE THE CO-ORDINATES OF THE BASE.
+; 
+;   IDEA IS TO DRAW VERTICAL LINES FROM PEAK TO BASE FROM MIDLINE, ONCE IN THE LEFT DIRECTION AND AGAIN IN THE RIGHT DIRECTION
 ;
 ;
-;
-;
+;    (X1,Y1) IS THE PEAK OF THE TRIANGLE, (X2, Y2) AND (X3,Y3) ARE THE CO-ORDINATES OF THE BASE.
 ;
 ;
 ;
@@ -308,7 +309,7 @@ TRI_PEAKX1 DW 230D       ;THE PEAK OF THE SECOND TRIANGLE, REFLECTION OF THE FIR
 
        ;------------------------------------------------------------------------------------------------;
        
-      ; CALL LEFTHALFCOLOR                  ;;;;;;;;;;;;;;PROBLEM!!!!!!!;;;;;;;;;;;;;;;;;;;;;;;;;
+       CALL LEFTHALFCOLOR                  ;;;;;;;;;;;;;;PROBLEM!!!!!!!;;;;;;;;;;;;;;;;;;;;;;;;;
         
        ;--------------------------------------------------------------------------------------------------; 
         
@@ -324,7 +325,9 @@ TRI_PEAKX1 DW 230D       ;THE PEAK OF THE SECOND TRIANGLE, REFLECTION OF THE FIR
         LEFTHALFCOLOR PROC 
             
             ;LEFT-HALF OF THE TRIANGLE 
+        
        
+        
         MOV CX, TRI_X1
         MOV DX, TRI_Y1 
         
@@ -337,10 +340,10 @@ TRI_PEAKX1 DW 230D       ;THE PEAK OF THE SECOND TRIANGLE, REFLECTION OF THE FIR
         MOV LINEST_Y, BX
         
         
-        PICKLINE2:
+        PCKLN2:
         
         CMP CX,TRI_X2
-        JE HALFDONE2
+        JLE HLFDN2
         
                
         MOV BX, LINEST_Y     ;KEEPING Y CO-ORDINATE OF NEXT VERTICAL LINE FROM HERE, SINCE DX GETS USED.
@@ -348,10 +351,10 @@ TRI_PEAKX1 DW 230D       ;THE PEAK OF THE SECOND TRIANGLE, REFLECTION OF THE FIR
         INC BX
         MOV LINEST_Y, BX
         
-            VERTICALLINE2:
+            VRTCLLN2:
                  
                  CMP DX, TRI_Y2    ;Y2,Y3 SAME HERE, DOESN'T MATTER WHAT WE COMPARE WITH
-                 JE ENDLINE2
+                 JGE ENDLN2
                  
                    
                  MOV AL, 15D      ;THE LINE SELECTED IS NOW COLORED FROM TOP TO BOTTOM   ;WHITE COLOR FIXED
@@ -360,23 +363,21 @@ TRI_PEAKX1 DW 230D       ;THE PEAK OF THE SECOND TRIANGLE, REFLECTION OF THE FIR
                  
                  INC DX
                  
-                 JMP VERTICALLINE2
+                 JMP VRTCLLN2
         
         
-                ENDLINE2:
+                ENDLN2:
                 
                 DEC CX              ;GOING LEFT
                 MOV DX, LINEST_Y    ;NEXT LINE'S Y WAS SET BEFORE. TAKING THAT DIRECTLY
                 
-                JMP PICKLINE2       
+                JMP PCKLN2       
                 
        
        
-       HALFDONE2:
+       HLFDN2:
        
-       
-       
-       
+  
        RET 
        
        
